@@ -1,0 +1,33 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore App
+        run: dotnet restore .\App\App.csproj
+
+      - name: Restore Tests
+        run: dotnet restore .\RentalApp.Tests\RentalApp.Tests.csproj
+
+      - name: Build App
+        run: dotnet build .\App\App.csproj --configuration Release --no-restore
+
+      - name: Build Tests
+        run: dotnet build .\RentalApp.Tests\RentalApp.Tests.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test .\RentalApp.Tests\RentalApp.Tests.csproj --configuration Release --no-build
